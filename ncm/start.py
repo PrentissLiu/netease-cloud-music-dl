@@ -9,6 +9,7 @@ from ncm.downloader import get_song_info_by_id
 from ncm.downloader import download_song_by_id
 from ncm.downloader import download_song_by_song
 from ncm.downloader import format_string
+from ncm.downloader import download_album_cover
 from ncm.constants import headers
 
 # load the config first
@@ -33,6 +34,8 @@ def download_album_songs(album_id):
     for i, song in enumerate(songs):
         print('{}: {}'.format(i + 1, song['name']))
         download_song_by_song(song, folder_path, False)
+        if i == 0 :
+            download_album_cover(song,folder_path)
 
 
 def download_program(program_id):

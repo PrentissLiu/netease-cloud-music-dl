@@ -22,6 +22,42 @@ def download_song_by_id(song_id, download_folder, sub_folder=True):
     download_song_by_song(song, download_folder, sub_folder)
 
 
+def download_album_cover(song, download_folder, sub_folder=True, program=False):
+    # get song info
+    api = CloudApi()
+    song_id = song['id']
+    song_name = format_string(song['name'])
+    if program:
+        artist_name = format_string(song['dj']['nickname'])
+        album_name = format_string(song['dj']['brand'])
+    else:
+        artist_name = format_string(song['artists'][0]['name'])
+        album_name = format_string(song['album']['name'])
+    # download cover
+    if program:
+        cover_url = song['coverUrl']
+    else:
+        cover_url = song['album']['blurPicUrl']
+
+    if cover_url is None:
+        if program:
+            cover_url = song['mainSong']['album']['picUrl']
+        else:
+            cover_url = song['album']['picUrl']
+    cover_file_name = 'cover_{}.jpg'.format(song_id)
+
+        # update song folder name by config, if support sub folder
+    if sub_folder:
+        switcher_folder = {
+            1: download_folder,
+            2: os.path.join(download_folder, artist_name),
+            3: os.path.join(download_folder, artist_name, album_name),
+        }
+        song_download_folder = switcher_folder.get(config.SONG_FOLDER_TYPE, download_folder)
+    else:
+        song_download_folder = download_folder
+    download_file(cover_url, 'cover.jpg', song_download_folder)
+
 def download_song_by_song(song, download_folder, sub_folder=True, program=False):
     # get song info
     api = CloudApi()
